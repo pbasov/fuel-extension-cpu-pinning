@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(
-       name='fuel-extension-cpu-pinning',
+       name='fuel_extension_cpu_pinning',
        version='1.0',
        description='Demonstration package for Nailgun Extensions',
        author='Fuel Nailgman',
@@ -13,10 +13,10 @@ setup(
                    'Programming Language :: Python :: 2',
                    'Environment :: Console',
                    ],
-       packages=['fuel-extension-cpu-pinning'],
+       packages=['fuel_extension_cpu_pinning'],
        entry_points={
           'nailgun.extensions': [
-             'test_ext = fuel-extension-cpu-pinning.extension:CpuPinningExtension',
+             'fuel_extension_cpu_pinning = fuel_extension_cpu_pinning.extension:CpuPinningExtension',
            ],
        },
        zip_safe=False,
