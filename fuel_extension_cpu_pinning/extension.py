@@ -1,4 +1,4 @@
-import datetime
+import os
 import logging
 
 from nailgun.extensions import BaseExtension
@@ -11,12 +11,12 @@ class PinningOverridePipeline(BasePipeline):
 
     @classmethod
     def process_provisioning(cls, data, cluster, nodes, **kwargs):
-        #Fix pinning values in grub
+        # Fix pinning values in grub
         return data
 
     @classmethod
     def process_deployment(cls, data, cluster, nodes, **kwargs):
-        #Fix pinning values in astute.yaml
+        # Fix pinning values in astute.yaml
         return data
 
 
@@ -28,6 +28,10 @@ class CpuPinningExtension(BaseExtension):
     data_pipelines = [
         PinningOverridePipeline,
     ]
+
+    @classmethod
+    def alembic_migrations_path(cls):
+        return os.path.join(os.path.dirname(__file__), 'migrations')
 
     @classmethod
     def on_node_delete(cls, node):
