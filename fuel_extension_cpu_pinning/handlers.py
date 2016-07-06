@@ -25,6 +25,7 @@ class CpuPinningHandler(BaseHandler):
         if not pins_data:
             pins_data = CpuPinOverride()
             pins_data.id = node_id
+
         validator = validators.CpuPinningValidator
         api_data = self.checked_data(validator.validate,
                                      data=web.data(),
