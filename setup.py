@@ -18,6 +18,10 @@ setup(
           'nailgun.extensions': [
              'fuel_extension_cpu_pinning = fuel_extension_cpu_pinning.extension:CpuPinningExtension',
            ],
+           'fuelclient': [
+              'cpu-pinning-set = fuel_extension_cpu_pinning.fuelclient:SetPinning',
+              'cpu-pinning-get = fuel_extension_cpu_pinning.fuelclient:GetPinning',
+           ]
        },
        zip_safe=False,
 )

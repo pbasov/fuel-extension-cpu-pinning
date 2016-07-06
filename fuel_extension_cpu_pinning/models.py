@@ -8,11 +8,9 @@ from nailgun.db import db
 from nailgun.errors import errors
 from nailgun.db.sqlalchemy.models.base import Base
 
-from fuel_extension_cpu_pinning.extension import CpuPinningExtension
-
 
 class CpuPinOverride(Base):
-    __tablename__ = CpuPinningExtension.table_prefix() + 'pins'
+    __tablename__ = 'cpu_pinning_override_pins'
     id = Column(Integer, primary_key=True)
     nova_cores = Column(psql.ARRAY(String(255)),
                         default=[], nullable=False, server_default='{}')
@@ -50,6 +48,13 @@ class CpuPinOverride(Base):
         :returns: instance of an object (model)
         """
         db().add(instance)
+        db().flush()
+        db().commit()
+        return instance
+
+    @classmethod
+    def delete(cls, instance):
+        db().delete(instance)
         db().flush()
         db().commit()
         return instance

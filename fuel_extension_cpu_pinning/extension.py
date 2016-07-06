@@ -8,8 +8,7 @@ from nailgun.extensions import BaseExtension
 from nailgun.extensions import BasePipeline
 
 from fuel_extension_cpu_pinning.models import CpuPinOverride
-
-import pdb
+from fuel_extension_cpu_pinning import handlers
 
 
 class PinningOverridePipeline(BasePipeline):
@@ -72,8 +71,6 @@ class PinningOverridePipeline(BasePipeline):
             for nm_key, nm_val in node_data['network_metadata']['nodes'].items():
                 if nm_val['uid'] in pinning_nodes:
                     nm_val['nova_cpu_pinning_enabled'] = True
-        # p = pdb.Pdb(stdin=open('/dev/pts/0', 'r+'), stdout=open('/dev/pts/0', 'r+'))
-        # p.set_trace()
         logger.debug('Overriding CPU pinning values in deployment data')
         return data
 
@@ -82,6 +79,9 @@ class CpuPinningExtension(BaseExtension):
     name = 'cpu_pinning_override'
     version = '1.0.0'
     description = 'CPU pinning override for Nova and vrouter'
+
+    urls = [{'uri': r'/nodes/(?P<node_id>\d+)/cpu-pinning/?$',
+             'handler': handlers.CpuPinningHandler}]
 
     data_pipelines = [
         PinningOverridePipeline,
