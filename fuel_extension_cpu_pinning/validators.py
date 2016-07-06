@@ -18,6 +18,9 @@ class CpuPinningValidator(BasicValidator):
 
     @classmethod
     def validate(cls, data, node=None, pins_data=None):
+        """Check input data for intersections
+           to ensure correct core bindings
+        """
         dict_data = cls.validate_json(data)
         cls.validate_schema(dict_data, cls.schema)
 

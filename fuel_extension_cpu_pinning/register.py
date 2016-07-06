@@ -16,4 +16,5 @@ releases = {rl: rl['extensions'] for rl in db().query(Release).all()}
 set_extensions(clusters)
 set_extensions(releases)
 
+db().flush()
 db().commit()

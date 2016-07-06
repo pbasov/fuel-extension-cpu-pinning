@@ -14,11 +14,17 @@ class CpuPinningHandler(BaseHandler):
     @content
     def GET(self, node_id):
         pins_data = CpuPinOverride.get_by_uid(node_id)
-        return json.dumps(dict(pins_data))
+        if pins_data:
+            return json.dumps(dict(pins_data))
+        else:
+            return json.dumps({})
 
     @content
     def PUT(self, node_id):
         pins_data = CpuPinOverride.get_by_uid(node_id)
+        if not pins_data:
+            pins_data = CpuPinOverride()
+            pins_data.id = node_id
         validator = validators.CpuPinningValidator
         api_data = self.checked_data(validator.validate,
                                      data=web.data(),
@@ -41,7 +47,8 @@ class CpuPinningHandler(BaseHandler):
     @content
     def DELETE(self, node_id):
         pins_data = CpuPinOverride.get_by_uid(node_id)
-        pins_data.vrouter_cores = []
-        pins_data.nova_cores = []
-        CpuPinOverride.update(pins_data)
-        return json.dumps(dict(pins_data))
+        if pins_data:
+            CpuPinOverride.delete(pins_data)
+            return json.dumps(dict(pins_data))
+        else:
+            json.dumps({})

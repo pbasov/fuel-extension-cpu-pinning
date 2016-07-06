@@ -23,34 +23,34 @@ API_URI = '/nodes/{}/cpu-pinning/'
 
 
 class GetPinning(show.ShowOne, command.Command):
-    columns = ('id', 'nova_cores', 'vrouter_cores')
+    columns = ('node', 'nova_cores', 'vrouter_cores')
 
     def take_action(self, parsed_args):
-        data = APIClient.get_request(API_URI.format(parsed_args.id))
+        data = APIClient.get_request(API_URI.format(parsed_args.node))
         data = data_utils.get_display_data_single(self.columns, data)
+        data['node'] = parsed_args['node']
         return self.columns, data
 
     def get_parser(self, prog_name):
         parser = super(GetPinning, self).get_parser(prog_name)
-        parser.add_argument('id', type=int,
-                            help='Id')
+        parser.add_argument('--node', type=int, help='node id', required=True)
         return parser
 
 
 class SetPinning(command.Command):
-    columns = ('id', 'nova_cores', 'vrouter_cores')
+    columns = ('node', 'nova_cores', 'vrouter_cores')
 
     def take_action(self, parsed_args):
         data = {'nova_cores': parsed_args.nova_cores.split(','),
                 'vrouter_cores': parsed_args.vrouter_cores.split(',')}
-        result = APIClient.put_request(API_URI.format(parsed_args.id), data)
+        result = APIClient.put_request(API_URI.format(parsed_args.node), data)
 
         return self.columns, data
 
     def get_parser(self, prog_name):
         parser = super(SetPinning, self).get_parser(prog_name)
         parser.add_argument('--node', type=int,
-                            help='id', 'required'=True)
+                            help='node id', required=True)
         parser.add_argument('--vrouter_cores', type=str,
                             help='vrouter mask', default=None)
         parser.add_argument('--nova_cores', type=str,
@@ -59,9 +59,9 @@ class SetPinning(command.Command):
 
 
 class ListPinning(command.Command):
-    columns = ('id', 'nova_cores', 'vrouter_cores')
+    columns = ('node', 'nova_cores', 'vrouter_cores')
 
     def take_action(self, parsed_args):
-        result = APIClient.put_request(API_URI.format(parsed_args.id), data)
+        result = APIClient.put_request(API_URI.format(parsed_args.node), data)
 
         return self.columns, data

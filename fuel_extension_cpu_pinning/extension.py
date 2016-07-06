@@ -19,16 +19,17 @@ class PinningOverridePipeline(BasePipeline):
         for param in kparams:
             if 'isolcpus' in param:
                 kparams[kparams.index(param)] = isolcpus
-            if isolcpus not in kparams:
-                kparams.append(isolcpus)
+                break
+        else:
+            kparams.append(isolcpus)
         logger.debug('Generating kernel parameters data')
         return ' '.join(kparams)
 
     @classmethod
     def process_provisioning(cls, data, cluster, nodes, **kwargs):
         """Find and replace isolcpus kernel parameter in provisioning data
-           Find compute nodes in the data, lookup kernel parameters,
-           update or append parameters with values from the pins table.
+           Lookup kernel parameters, update or append parameters with values
+           from the pins table.
         """
         nodes_data = [node for node in data['nodes']]
 
@@ -46,6 +47,10 @@ class PinningOverridePipeline(BasePipeline):
 
     @classmethod
     def process_deployment(cls, data, cluster, nodes, **kwargs):
+        """Find and replace cpu pinning parameters in deployment data,
+           this includes changing nova hash, nodes hash on every node and
+           contrail plugin parameters.
+        """
         nodes_data = [node_data for node_data in data
                       if node_data['uid'] != 'master']
         pinning_nodes = [node_data['uid'] for node_data in nodes_data
@@ -55,7 +60,7 @@ class PinningOverridePipeline(BasePipeline):
         for node_data in nodes_data:
             pins_data = CpuPinOverride.get_by_uid(node_data['uid'])
             if pins_data:
-                pinning_nodes.append(node_data['uid'])
+                # Setting nova cores and kernel params
                 node_data['nova']['cpu_pinning'] = pins_data.nova_cores
                 kparams = node_data['kernel_params']['kernel']
                 newkparams = PinningOverridePipeline._generate_kernel_params(
@@ -64,11 +69,13 @@ class PinningOverridePipeline(BasePipeline):
                 node_data['release']['attributes_metadata']['editable'][
                           'kernel_params']['kernel']['value'] = newkparams
 
+            # Setting contrail vrouter coremask
             if pins_data.vrouter_cores and 'dpdk' in node_data['roles']:
-                pins_str = ','.join(pins_data.nova_cores + pins_data.vrouter_cores)
+                pins_str = ','.join(pins_data.vrouter_cores)
                 node_data['contrail']['vrouter_core_mask'] = pins_str
 
-            for nm_key, nm_val in node_data['network_metadata']['nodes'].items():
+            # Overriding network_metadata['nodes'] hash on all nodes
+            for nm_val in node_data['network_metadata']['nodes'].values():
                 if nm_val['uid'] in pinning_nodes:
                     nm_val['nova_cpu_pinning_enabled'] = True
         logger.debug('Overriding CPU pinning values in deployment data')
@@ -93,6 +100,8 @@ class CpuPinningExtension(BaseExtension):
 
     @classmethod
     def on_node_delete(cls, node):
+        pins_data = CpuPinOverride.get_by_uid(node['uid'])
+        CpuPinOverride.delete(pins_data)
         logging.debug('Node %s has been deleted', node.id)
 
     @classmethod
