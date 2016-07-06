@@ -21,6 +21,7 @@ setup(
            'fuelclient': [
               'cpu-pinning-set = fuel_extension_cpu_pinning.fuelclient:SetPinning',
               'cpu-pinning-get = fuel_extension_cpu_pinning.fuelclient:GetPinning',
+              'cpu-pinning-del = fuel_extension_cpu_pinning.fuelclient:DelPinning',
            ]
        },
        zip_safe=False,

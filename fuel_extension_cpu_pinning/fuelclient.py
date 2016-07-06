@@ -26,8 +26,11 @@ class GetPinning(show.ShowOne, command.Command):
     columns = ('node', 'nova_cores', 'vrouter_cores')
 
     def take_action(self, parsed_args):
-        data = APIClient.get_request(API_URI.format(parsed_args.node))
-        data['node'] = parsed_args.node
+        args = parsed_args.__dict__
+        data = APIClient.get_request(API_URI.format(args['node']))
+        data['node'] = args['node']
+        data['vrouter_cores'] = data.get('vrouter_cores', [])
+        data['nova_cores'] = data.get('nova_cores', [])
         data = data_utils.get_display_data_single(self.columns, data)
         return self.columns, data
 
@@ -41,9 +44,10 @@ class SetPinning(command.Command):
     columns = ('node', 'nova_cores', 'vrouter_cores')
 
     def take_action(self, parsed_args):
-        data = {'nova_cores': parsed_args.__dict__.get('nova_cores', '').split(','),
-                'vrouter_cores': parsed_args.__dict__.get('vrouter_cores', '').split(',')}
-        result = APIClient.put_request(API_URI.format(parsed_args.node), data)
+        args = parsed_args.__dict__
+        data = {'nova_cores': args.get('nova_cores', '').split(','),
+                'vrouter_cores': args.get('vrouter_cores', '').split(',')}
+        result = APIClient.put_request(API_URI.format(args['node']), data)
 
         return self.columns, data
 
@@ -55,4 +59,19 @@ class SetPinning(command.Command):
                             help='vrouter mask', default=None)
         parser.add_argument('--nova_cores', type=str,
                             help='nova mask', default=None)
+        return parser
+
+
+class DelPinning(command.Command):
+    columns = ('node')
+
+    def take_action(self, parsed_args):
+        args = parsed_args.__dict__
+        data = {'node': args['node']}
+        result = APIClient.delete_request(API_URI.format(args['node']))
+        return self.columns, data
+
+    def get_parser(self, prog_name):
+        parser = super(DelPinning, self).get_parser(prog_name)
+        parser.add_argument('--node', type=int, help='node id', required=True)
         return parser
