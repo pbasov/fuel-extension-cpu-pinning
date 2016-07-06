@@ -31,12 +31,13 @@ setup(
        author_email='fuel@nailgman.com',
        url='http://example.com',
        classifiers=['Development Status :: 3 - Alpha',
-                   'License :: OSI Approved :: Apache Software License',
-                   'Programming Language :: Python',
-                   'Programming Language :: Python :: 2',
-                   'Environment :: Console',
-                   ],
+                    'License :: OSI Approved :: Apache Software License',
+                    'Programming Language :: Python',
+                    'Programming Language :: Python :: 2',
+                    'Environment :: Console',
+                    ],
        packages=['fuel_extension_cpu_pinning'],
+       package_data={'package': 'migrations'},
        cmdclass={'install': ExtInstall},
        entry_points={
           'nailgun.extensions': [

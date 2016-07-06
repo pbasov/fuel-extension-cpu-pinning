@@ -17,7 +17,7 @@ class CpuPinningValidator(BasicValidator):
     }
 
     @classmethod
-    def validate(cls, data, node=None, pins_data={}):
+    def validate(cls, data, node=None, pins_data=None):
         """Check input data for intersections
            to ensure correct core bindings
         """
@@ -30,14 +30,14 @@ class CpuPinningValidator(BasicValidator):
         db_vrouter_cores = pins_data.get('vrouter_cores', [])
 
         if set(api_nova_cores) & set(api_vrouter_cores) != set():
-            raise Exception
+            raise errors.InvalidData('Input values conflict with each other')
 
         if all(cores != [] for cores in (api_nova_cores, api_vrouter_cores)):
             return dict_data
 
         if any(condition != set() for condition in [
-           set(api_nova_cores) & set(db_vrouter_cores),
-           set(api_vrouter_cores) & set(db_nova_cores)]
+            set(api_nova_cores) & set(db_vrouter_cores),
+            set(api_vrouter_cores) & set(db_nova_cores)]
         ):
-            raise Exception
+            raise errors.InvalidData('Input values conflict with existing one')
         return dict_data
