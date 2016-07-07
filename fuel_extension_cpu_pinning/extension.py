@@ -69,10 +69,10 @@ class PinningOverridePipeline(BasePipeline):
                 node_data['release']['attributes_metadata']['editable'][
                           'kernel_params']['kernel']['value'] = newkparams
 
-            # Setting contrail vrouter coremask
-            if pins_data.vrouter_cores and 'dpdk' in node_data['roles']:
-                pins_str = ','.join(pins_data.vrouter_cores)
-                node_data['contrail']['vrouter_core_mask'] = pins_str
+                # Setting contrail vrouter coremask
+                if pins_data.vrouter_cores and 'dpdk' in node_data['roles']:
+                    pins_str = ','.join(pins_data.vrouter_cores)
+                    node_data['contrail']['vrouter_core_mask'] = pins_str
 
             # Overriding network_metadata['nodes'] hash on all nodes
             for nm_val in node_data['network_metadata']['nodes'].values():
@@ -100,10 +100,8 @@ class CpuPinningExtension(BaseExtension):
 
     @classmethod
     def on_node_delete(cls, node):
-        pins_data = CpuPinOverride.get_by_uid(node['uid'])
-        CpuPinOverride.delete(pins_data)
-        logging.debug('Node %s has been deleted', node.id)
-
-    @classmethod
-    def on_cluster_delete(cls, cluster):
-        logging.debug('Cluster %s has been deleted', cluster.id)
+        pins_data = CpuPinOverride.get_by_uid(node.id)
+        if pins_data:
+            CpuPinOverride.delete(pins_data)
+            logging.debug('CPU pinning data for node {}'
+                          ' has been deleted'.format(node.id))

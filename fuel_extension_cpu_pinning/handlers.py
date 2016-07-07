@@ -18,7 +18,7 @@ class CpuPinningHandler(BaseHandler):
             return json.dumps(dict(pins_data))
         else:
             raise self.http(404, u'CPU pinning data'
-                            'for node {} not found'.format(node_id))
+                            ' for node {} not found'.format(node_id))
 
     @content
     def PUT(self, node_id):
@@ -53,4 +53,5 @@ class CpuPinningHandler(BaseHandler):
             CpuPinOverride.delete(pins_data)
             return json.dumps(dict(pins_data))
         else:
-            raise self.http(404, u'Node id not found')
+            raise self.http(404, u'CPU pinning data'
+                            ' for node {} not found'.format(node_id))

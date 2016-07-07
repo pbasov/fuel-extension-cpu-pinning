@@ -1,9 +1,21 @@
+import os
+
 from setuptools import setup
 from setuptools.command.install import install
 
 from nailgun.db import db
 from nailgun.db.sqlalchemy.models import Cluster
 from nailgun.db.sqlalchemy.models import Release
+
+
+def package_files(directory):
+    paths = []
+    for (path, directories, filenames) in os.walk(directory):
+        for filename in filenames:
+            paths.append(os.path.join('..', path, filename))
+    return paths
+
+extra_files = package_files('migrations')
 
 
 class ExtInstall(install):
@@ -26,9 +38,9 @@ class ExtInstall(install):
 setup(
        name='fuel_extension_cpu_pinning',
        version='1.0',
-       description='Demonstration package for Nailgun Extensions',
-       author='Fuel Nailgman',
-       author_email='fuel@nailgman.com',
+       description='CPU pinning overrides',
+       author='Pavel Basov, Dmitry Ukov',
+       author_email='pbasov@mirantis.com',
        url='http://example.com',
        classifiers=['Development Status :: 3 - Alpha',
                     'License :: OSI Approved :: Apache Software License',
@@ -37,7 +49,7 @@ setup(
                     'Environment :: Console',
                     ],
        packages=['fuel_extension_cpu_pinning'],
-       package_data={'package': 'migrations'},
+       package_data={'fuel_extension_cpu_pinning': extra_files},
        cmdclass={'install': ExtInstall},
        entry_points={
           'nailgun.extensions': [
