@@ -15,7 +15,7 @@ def package_files(directory):
             paths.append(os.path.join('..', path, filename))
     return paths
 
-extra_files = package_files('migrations')
+extra_files = package_files('fuel_extension_cpu_pinning/migrations')
 
 
 class ExtInstall(install):
