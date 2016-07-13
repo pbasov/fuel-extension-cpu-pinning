@@ -5,7 +5,7 @@ This Nailgun extension allows you to override provisioning and deployment data f
 ## Installation
 
 `setup.py install`
-During the installation extension will register iteself in all existing clusters and releases.
+During the installation extension will register itself in all existing clusters and releases.
 
 ## API Reference
 
