@@ -72,7 +72,9 @@ class PinningOverridePipeline(BasePipeline):
                 # Setting contrail vrouter coremask
                 if pins_data.vrouter_cores and 'dpdk' in node_data['roles']:
                     pins_str = ','.join(pins_data.vrouter_cores)
-                    node_data['contrail']['vrouter_core_mask'] = pins_str
+                    # vn637v. Concatenate pins + empty string to convert value from
+                    # FixNum to String
+                    node_data['contrail']['vrouter_core_mask'] = ' ' + pins_str
 
             # Overriding network_metadata['nodes'] hash on all nodes
             for nm_val in node_data['network_metadata']['nodes'].values():

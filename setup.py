@@ -41,7 +41,7 @@ setup(
        description='CPU pinning overrides',
        author='Pavel Basov, Dmitry Ukov',
        author_email='pbasov@mirantis.com',
-       url='http://example.com',
+       url='http://mirantis.com',
        classifiers=['Development Status :: 3 - Alpha',
                     'License :: OSI Approved :: Apache Software License',
                     'Programming Language :: Python',

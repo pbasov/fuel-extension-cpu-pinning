@@ -26,8 +26,8 @@ class CpuPinningValidator(BasicValidator):
 
         api_nova_cores = dict_data.get('nova_cores', [])
         api_vrouter_cores = dict_data.get('vrouter_cores', [])
-        db_nova_cores = pins_data.get('nova_cores', [])
-        db_vrouter_cores = pins_data.get('vrouter_cores', [])
+        db_nova_cores = pins_data.get('nova_cores') or []
+        db_vrouter_cores = pins_data.get('vrouter_cores') or []
 
         if set(api_nova_cores) & set(api_vrouter_cores) != set():
             raise errors.InvalidData('Input values conflict with each other')

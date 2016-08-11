@@ -45,8 +45,9 @@ class SetPinning(command.Command):
 
     def take_action(self, parsed_args):
         args = parsed_args.__dict__
-        data = {'nova_cores': args.get('nova_cores', '').split(','),
-                'vrouter_cores': args.get('vrouter_cores', '').split(',')}
+        nova_cores = [s for s in args['nova_cores'].split(',') if s]
+        vrouter_cores = [s for s in args['vrouter_cores'].split(',') if s]
+        data = {'nova_cores': nova_cores, 'vrouter_cores': vrouter_cores}
         result = APIClient.put_request(API_URI.format(args['node']), data)
 
         return self.columns, data
@@ -56,9 +57,9 @@ class SetPinning(command.Command):
         parser.add_argument('--node', type=int,
                             help='node id', required=True)
         parser.add_argument('--vrouter_cores', type=str,
-                            help='vrouter mask', default=None)
+                            help='vrouter mask', default='')
         parser.add_argument('--nova_cores', type=str,
-                            help='nova mask', default=None)
+                            help='nova mask', default='')
         return parser
 
 

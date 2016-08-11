@@ -24,3 +24,4 @@ There are two new fuel2 commands that work with API endpoints and allow you to s
 `fuel2 cpu-pinning-get --node 32`
 
 `fuel2 cpu-pinning-del --node 32`
+
